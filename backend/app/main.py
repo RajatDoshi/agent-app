@@ -7,7 +7,10 @@ app = FastAPI(title="Agent SDK Backend")
 # Allow React dev server
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://raiatdoshi.com"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
