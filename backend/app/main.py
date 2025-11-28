@@ -9,7 +9,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://raiatdoshi.com"
+        "https://rajatdoshi.com",
+        "https://www.rajatdoshi.com",
+        "http://rajatdoshi.com",
+        "http://www.rajatdoshi.com"
+
     ],
     allow_credentials=True,
     allow_methods=["*"],
