@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from agents import Agent, Runner, InputGuardrail, GuardrailFunctionOutput
 from agents.exceptions import InputGuardrailTripwireTriggered
 from dotenv import load_dotenv
+from app.db import supabase
 import os
 import asyncio
 
@@ -71,7 +72,15 @@ triage_agent = Agent(
 async def ask_agent(request: PromptRequest):
     try:
         result = await Runner.run(triage_agent, request.prompt)
-        return {"response": str(result.final_output)}
+        response_text = str(result.final_output)
+
+        # Save to Supabase
+        supabase.table("questions").insert({
+            "prompt": request.prompt,
+            "response": response_text
+        }).execute()
+
+        return {"response": response_text}
     except InputGuardrailTripwireTriggered:
         return {"error": "Guardrail blocked this input"}
     except Exception as e:
