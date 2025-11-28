@@ -1,50 +1,45 @@
 import { useState } from "react";
 
+const API_URL = "https://agent-app-uqy3.onrender.com";
+// const API_URL = "http://127.0.0.1:8000";
+
 export default function App() {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function askAgent() {
-    if (!prompt.trim()) return;
+  const askAgent = async () => {
     setLoading(true);
-    setResponse("");
-    try {
-      const res = await fetch("http://127.0.0.1:8000/agent/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      });
-      const data = await res.json();
-      setResponse(data.response ?? data.error ?? "No response");
-    } catch (err) {
-      setResponse("Error connecting to backend");
-    }
+    const res = await fetch(`${API_URL}/agent/ask`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
+    const data = await res.json();
+    setResponse(data.response || data.error || "No response");
     setLoading(false);
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-xl bg-white p-8 rounded-2xl shadow-md space-y-6">
-        <h1 className="text-3xl font-semibold text-gray-900 text-center">
-          AI Agent Q&A
-        </h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="bg-white shadow-md rounded-xl p-6 w-full max-w-md">
+        <h1 className="text-2xl font-semibold mb-4">Ask the Agent</h1>
         <textarea
-          className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+          className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           rows={4}
-          placeholder="Ask your question..."
+          placeholder="Type your question..."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
         />
         <button
-          className="w-full py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition"
           onClick={askAgent}
+          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
           disabled={loading}
         >
-          {loading ? "Thinking..." : "Ask"}
+          {loading ? "Loading..." : "Ask"}
         </button>
         {response && (
-          <div className="p-4 bg-gray-100 rounded-lg whitespace-pre-wrap">
+          <div className="mt-4 p-3 bg-gray-100 rounded-lg whitespace-pre-wrap">
             {response}
           </div>
         )}
